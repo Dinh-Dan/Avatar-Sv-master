@@ -32,7 +32,9 @@ public class FarmMsgHandler extends MessageHandler {
             return;
         }
         try {
+
             System.out.println("FarmMsgHandler: " + mss.getCommand());
+
             switch (mss.getCommand()) {
                 case Cmd.SET_BIG_FARM: {
                     this.service.setBigFarm(mss);
@@ -44,6 +46,11 @@ public class FarmMsgHandler extends MessageHandler {
                 }
                 case Cmd.BUY_ANIMAL: {
                     this.service.Buy_ANIMAL(mss);
+                    break;
+                }
+
+                case Cmd.HA_PHOM: {
+                    this.service.AnimalCare(mss);
                     break;
                 }
                 case Cmd.GET_BIG_FARM: {
@@ -62,6 +69,11 @@ public class FarmMsgHandler extends MessageHandler {
                     this.service.getInventory(mss);
                     break;
                 }
+                
+                case Cmd.HARVEST_STARFRUIT: {
+                    this.service.HarvestStarfurit(mss);
+                    break;
+                } 
                 case Cmd.JOIN: {
                     this.service.joinFarm(mss);
                     break;

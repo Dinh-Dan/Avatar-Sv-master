@@ -20,7 +20,7 @@ public class MapManager {
     
     private final ArrayList<Map> maps = new ArrayList<>();
 
-    public void add(Map map) {
+   public void add(Map map) {
         synchronized (maps) {
             maps.add(map);
         }

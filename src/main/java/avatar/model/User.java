@@ -603,111 +603,115 @@ public class User {
         }
     }
 
-    public void saveFarmData(int userId) throws SQLException {
-        // Chuẩn bị dữ liệu để lưu vào cơ sở dữ liệu
-        JSONArray landData = new JSONArray();
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+  public void saveFarmData(int userId) throws SQLException {
+    // Chuẩn bị dữ liệu để lưu vào cơ sở dữ liệu
+    JSONArray landData = new JSONArray();
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-        for (LandItem landItem : this.session.user.landItems) {
-            JSONObject landObject = new JSONObject();
-            landObject.put("growthTime", landItem.getGrowthTime());
-            landObject.put("type", landItem.getType());//lao
-            landObject.put("suckhoe", landItem.getSucKhoe());//skhoe
-            landObject.put("resourceCount", landItem.getResourceCount());
-            landObject.put("isWatered", landItem.isWatered());
-            landObject.put("isFertilized", landItem.isFertilized());
-            landObject.put("isHarvestable", landItem.isHarvestable());
+    for (LandItem landItem : this.session.user.landItems) {
+        JSONObject landObject = new JSONObject();
+        landObject.put("growthTime", landItem.getGrowthTime());
+        landObject.put("type", landItem.getType());
+        landObject.put("suckhoe", landItem.getSucKhoe());
+        landObject.put("resourceCount", landItem.getResourceCount());
+        landObject.put("isWatered", landItem.isWatered());
+        landObject.put("isFertilized", landItem.isFertilized());
+        landObject.put("isHarvestable", landItem.isHarvestable());
 
-            LocalDateTime plantedTime = landItem.getPlantedTime();
-            if (plantedTime != null) {
-                landObject.put("plantedTime", plantedTime.format(formatter));
-            } else {
-                landObject.put("plantedTime", "not_planted"); // Hoặc loại bỏ dòng này
-            }
+        LocalDateTime plantedTime = landItem.getPlantedTime();
+        landObject.put("plantedTime", 
+            plantedTime != null ? plantedTime.format(formatter) : "not_planted");
 
-            landData.add(landObject);
-        }
-
-
-        JSONArray animalData = new JSONArray();
-        for (Animal animal : this.session.user.Animal) {
-            JSONObject animalObject = new JSONObject();
-            animalObject.put("id", animal.getId());
-            animalObject.put("health", animal.getHealth());
-            animalObject.put("level", animal.getLevel());
-            animalObject.put("resourceCount", animal.getResourceCount());
-            animalObject.put("nextProductionTime", animal.getNextProductionTime());
-            animalObject.put("isAlive", animal.isAlive());
-            animalObject.put("isReadyForBreeding", animal.isReadyForBreeding());
-            animalObject.put("isHarvestable", animal.isHarvestable());
-            animalData.add(animalObject);
-        }
-
-        JSONArray hatgiongData = new JSONArray();
-        for (HatGiong hatGiong : this.session.user.hatgiong) {
-            JSONObject hatGiongObject = new JSONObject();
-            hatGiongObject.put("id", hatGiong.getId());
-            hatGiongObject.put("soluong", hatGiong.getSoluong());
-            hatgiongData.add(hatGiongObject);
-        }
-
-
-        JSONArray phanbonData = new JSONArray();
-        for (PhanBon phanBon : this.session.user.PhanBon) {
-            JSONObject phanBonObject = new JSONObject();
-            phanBonObject.put("id", phanBon.getId());
-            phanBonObject.put("soluong", phanBon.getSoluong());
-            phanbonData.add(phanbonData);
-        }
-
-        JSONArray nongsanData = new JSONArray();
-        for (NongSan nongSan : this.session.user.NongSan) {
-            JSONObject nongSanObject = new JSONObject();
-            nongSanObject.put("id", nongSan.getId());
-            nongSanObject.put("soluong", nongSan.getSoluong());
-            nongsanData.add(nongsanData);
-        }
-
-        JSONArray nongsandacbietData = new JSONArray();
-        for (NongSanDacBiet nongsandacbiet : this.session.user.NongSanDacBiet) {
-            JSONObject nongsandacbietObject = new JSONObject();
-            nongsandacbietObject.put("id", nongsandacbiet.getId());
-            nongsandacbietObject.put("soluong", nongsandacbiet.getSoluong());
-            phanbonData.add(phanbonData);
-        }
-
-
-        // Cập nhật cơ sở dữ liệu với dữ liệu đã tạo
-        String query = "INSERT INTO `farm_data` (user_id, land_data, animal_data,hatgiong,phanbon,nongsan,nongsandacbiet) VALUES (?, ?, ?, ?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE land_data = ?, animal_data = ?, hatgiong = ?, phanbon = ?, nongsan = ?, nongsandacbiet = ?";
-        try (Connection connection = DbManager.getInstance().getConnection();
-             PreparedStatement ps = connection.prepareStatement(query)) {
-
-            // Chuyển đổi dữ liệu thành chuỗi JSON
-            String landDataString = landData.toString();
-            String animalDataString = animalData.toString();
-            String hatgiongDataString = hatgiongData.toString();
-            String phanbonDataString = phanbonData.toString();
-            String nongsanDataString = nongsanData.toString();
-            String nongsandacbietDataString = nongsandacbietData.toString();
-
-            // Cập nhật hoặc thêm mới dữ liệu vào bảng `farm_data`
-            ps.setInt(1, userId);
-            ps.setString(2, landDataString);
-            ps.setString(3, animalDataString);
-            ps.setString(4, hatgiongDataString);
-            ps.setString(5, phanbonDataString);
-            ps.setString(6, nongsanDataString);
-            ps.setString(7, nongsandacbietDataString);
-            ps.setString(8, landDataString);
-            ps.setString(9, animalDataString);
-            ps.setString(10, hatgiongDataString);
-            ps.setString(11, phanbonDataString);
-            ps.setString(12, nongsanDataString);
-            ps.setString(13, nongsandacbietDataString);
-            ps.executeUpdate();
-        }
+        landData.add(landObject);
     }
+
+    JSONArray animalData = new JSONArray();
+    for (Animal animal : this.session.user.Animal) {
+        JSONObject animalObject = new JSONObject();
+        animalObject.put("id", animal.getId());
+        animalObject.put("health", animal.getHealth());
+        animalObject.put("level", animal.getLevel());
+        animalObject.put("resourceCount", animal.getResourceCount());
+       int nextTime = animal.getNextProductionTime();
+if (nextTime > 0) {
+    animalObject.put("nextProductionTime", nextTime);
+} else {
+    animalObject.put("nextProductionTime", "none");
+}
+
+        animalObject.put("isAlive", animal.isAlive());
+        animalObject.put("isReadyForBreeding", animal.isReadyForBreeding());
+        animalObject.put("isHarvestable", animal.isHarvestable());
+        animalData.add(animalObject);
+    }
+
+    JSONArray hatgiongData = new JSONArray();
+    for (HatGiong hatGiong : this.session.user.hatgiong) {
+        JSONObject hatGiongObject = new JSONObject();
+        hatGiongObject.put("id", hatGiong.getId());
+        hatGiongObject.put("soluong", hatGiong.getSoluong());
+        hatgiongData.add(hatGiongObject);
+    }
+
+    JSONArray phanbonData = new JSONArray();
+    for (PhanBon phanBon : this.session.user.PhanBon) {
+        JSONObject phanBonObject = new JSONObject();
+        phanBonObject.put("id", phanBon.getId());
+        phanBonObject.put("soluong", phanBon.getSoluong());
+        phanbonData.add(phanBonObject);
+    }
+
+    JSONArray nongsanData = new JSONArray();
+    for (NongSan nongSan : this.session.user.NongSan) {
+        JSONObject nongSanObject = new JSONObject();
+        nongSanObject.put("id", nongSan.getId());
+        nongSanObject.put("soluong", nongSan.getSoluong());
+        nongsanData.add(nongSanObject);
+    }
+
+    JSONArray nongsandacbietData = new JSONArray();
+    for (NongSanDacBiet nongsandacbiet : this.session.user.NongSanDacBiet) {
+        JSONObject nongsandacbietObject = new JSONObject();
+        nongsandacbietObject.put("id", nongsandacbiet.getId());
+        nongsandacbietObject.put("soluong", nongsandacbiet.getSoluong());
+        nongsandacbietData.add(nongsandacbietObject);
+    }
+
+    // Cập nhật cơ sở dữ liệu với dữ liệu đã tạo
+    String query = "INSERT INTO `farm_data` (user_id, land_data, animal_data, hatgiong, phanbon, nongsan, nongsandacbiet) " +
+                   "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                   "ON DUPLICATE KEY UPDATE land_data = ?, animal_data = ?, hatgiong = ?, phanbon = ?, nongsan = ?, nongsandacbiet = ?";
+
+    try (Connection connection = DbManager.getInstance().getConnection();
+         PreparedStatement ps = connection.prepareStatement(query)) {
+
+        String landDataString = landData.toJSONString();
+        String animalDataString = animalData.toJSONString();
+        String hatgiongDataString = hatgiongData.toJSONString();
+        String phanbonDataString = phanbonData.toJSONString();
+        String nongsanDataString = nongsanData.toJSONString();
+        String nongsandacbietDataString = nongsandacbietData.toJSONString();
+
+        int i = 1;
+        ps.setInt(i++, userId);
+        ps.setString(i++, landDataString);
+        ps.setString(i++, animalDataString);
+        ps.setString(i++, hatgiongDataString);
+        ps.setString(i++, phanbonDataString);
+        ps.setString(i++, nongsanDataString);
+        ps.setString(i++, nongsandacbietDataString);
+
+        // phần update
+        ps.setString(i++, landDataString);
+        ps.setString(i++, animalDataString);
+        ps.setString(i++, hatgiongDataString);
+        ps.setString(i++, phanbonDataString);
+        ps.setString(i++, nongsanDataString);
+        ps.setString(i++, nongsandacbietDataString);
+
+        ps.executeUpdate();
+    }
+}
 
     public void loadFarmData(int userId) throws SQLException {
 
@@ -781,8 +785,9 @@ public class User {
                         JSONObject obj = (JSONObject) hatgiong;
                         int id = ((Long) obj.get("id")).intValue();
                         int soluong = ((Long) obj.get("soluong")).intValue();
-
+                        if(soluong<1)continue;
                         HatGiong animalObj = new HatGiong(id, soluong);
+                        
                         hatgiongs.add(animalObj);
                     }
                     this.session.user.hatgiong = hatgiongs;
@@ -881,7 +886,7 @@ public class User {
              PreparedStatement ps = connection.prepareStatement(ACCOUNT_LOGIN)) {
 
             ps.setString(1, this.username);
-            ps.setString(2, Utils.md5(password));
+            ps.setString(2, password);
             connection.setAutoCommit(false);  // Bắt đầu transaction
 
             try (ResultSet red = ps.executeQuery()) {
@@ -1587,7 +1592,16 @@ public class User {
             return null;
         }
     }
-
+ public PhanBon findPhanBon(int id) {
+        synchronized (PhanBon) {
+            for (PhanBon hd : PhanBon) {
+                if (hd.getId() == id) {
+                    return hd;
+                }
+            }
+            return null;
+        }
+    }
 
 
 

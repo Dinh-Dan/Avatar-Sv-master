@@ -49,21 +49,21 @@ public class TaiXiu {
     }
 
     public void startCountdown() {
-        new Thread(() -> {
-            long startTime = System.currentTimeMillis();
-            try {
-                while (countdown > 0) {
-                    long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-                    countdown = 40 - (int) elapsedSeconds;
-                    updateNpcChat(countdown);
-                    Thread.sleep(1000);
-                }
-                handleEndGame(); // Kết thúc game, trả kết quả
-                startNewGame(); // Bắt đầu phiên mới
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+//        new Thread(() -> {
+//            long startTime = System.currentTimeMillis();
+//            try {
+//                while (countdown > 0) {
+//                    long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+//                    countdown = 40 - (int) elapsedSeconds;
+//                    updateNpcChat(countdown);
+//                    Thread.sleep(1000);
+//                }
+//                handleEndGame(); // Kết thúc game, trả kết quả
+//                startNewGame(); // Bắt đầu phiên mới
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
     }
 
     // Cập nhật chat của NPC với thời gian còn lại
